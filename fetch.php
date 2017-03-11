@@ -88,8 +88,8 @@ function listMessages($service, $last_id) {
 					if ($message["id"] == $last_id) {
 						break 2;
 					}
+					WriteLog("[fetch][info] new id=".$message["id"]);
 					$messages []= getMessage($service, $message["id"]);
-					break 2;
 				}
 			}
 		} catch (Exception $e) {
@@ -102,54 +102,64 @@ function listMessages($service, $last_id) {
 function base64url_decode($data) {
 	return base64_decode(str_replace(array('-', '_'), array('+', '/'), $data));
 }
+function dfspart($part, $ans) {
+	if (isset($part["parts"])) {
+		foreach ($part["parts"] as $subpart) {
+			$ans = dfspart($subpart, $ans);
+		}
+	} else {
+		if (!isset($ans[$part["mimeType"]])) {
+			$ans[$part["mimeType"]] = array();
+		}
+		$ans[$part["mimeType"]] []= $part["body"];
+	}
+	return $ans;
+}
 
 $last_id = file_get_contents(__DIR__."/data/last_id.txt");
 $messages = listMessages($service, $last_id);
 if (count($messages) > 0) {
+	WriteLog("[fetch][info] get ".count($messages));
 	file_put_contents(__DIR__."/data/last_id.txt", $messages[0]["id"]);
-	$sth = $G["db"]->prepare("SELECT * FROM `{$C['DBTBprefix']}user` WHERE `fbmessage` = 1");
-	$sth->execute();
-	$users = $sth->fetchAll(PDO::FETCH_ASSOC);
-	$sthmsg = $G["db"]->prepare("INSERT INTO `{$C['DBTBprefix']}msgqueue` (`tmid`, `message`, `time`, `hash`) VALUES (:tmid, :message, :time, :hash)");
-	foreach ($messages as $message) {
+	foreach (array_reverse($messages) as $message) {
 		$subject = "";
+		$from = "";
+		$fromemail = "";
 		foreach ($message["modelData"]["payload"]["headers"] as $header) {
 			if ($header["name"] == "Subject") {
 				$subject = $header["value"];
-				break;
+			} else if ($header["name"] == "From") {
+				$from = $header["value"];
 			}
 		}
 		$content = "";
-		foreach ($message["modelData"]["payload"]["parts"] as $part) {
-			if ($part["mimeType"] == "text/plain") {
-				$content = $part["body"]["data"];
-				break;
-			}
-		}
-		if ($content == "") {
-			$content = $message["modelData"]["payload"]["parts"][0]["body"]["data"];
+		echo $from."\n";
+		$datas = dfspart($message["modelData"]["payload"], array());
+		if (isset($datas["text/plain"])) {
+			$content = $datas["text/plain"][0]["data"];
+		} else if (isset($datas["text/html"])) {
+			$content = $datas["text/html"][0]["data"];
+			$content = strip_tags($content);
 		}
 		$content = base64url_decode($content);
 		$content = preg_replace("/^\s+$/m", "", $content);
 		$content = preg_replace("/\n{3,}/", "\n\n", $content);
 		$content = preg_replace("/^[\t 　]+/m", "", $content);
+		$content = preg_replace("/^\n+/", "", $content);
 		$content = preg_replace("/\n+$/", "", $content);
-		$msg = $subject."\n".
-			"----------------------------------------\n".
-			$content;
-		foreach ($users as $user) {
-			$hash = md5(json_encode(array("tmid"=>$user["tmid"], "message"=>$msg, "time"=>$time)));
-			$sthmsg->bindValue(":tmid", $user["tmid"]);
-			$sthmsg->bindValue(":message", $msg);
-			$sthmsg->bindValue(":time", $time);
-			$sthmsg->bindValue(":hash", $hash);
-			$res = $sthmsg->execute();
-			if ($res === false) {
-				WriteLog("[fbmsg][error][insque] tmid=".$user["tmid"]." msg=".$content);
-			}
+
+		$sth = $G["db"]->prepare("INSERT INTO `{$C['DBTBprefix']}news` (`messageid`, `from`, `subject`, `content`, `hash`) VALUES (:messageid, :from, :subject, :content, :hash)");
+		$hash = md5(json_encode(array("messageid"=>$message["id"], "subject"=>$subject, "content"=>$content)));
+		$sth->bindValue(":messageid", $message["id"]);
+		$sth->bindValue(":from", $from);
+		$sth->bindValue(":subject", $subject);
+		$sth->bindValue(":content", $content);
+		$sth->bindValue(":hash", $hash);
+		$res = $sth->execute();
+		if ($res === false) {
+			WriteLog("[fetch][error][insnew] messageid=".$message["id"]);
 		}
-		echo $msg."\n\n\n";
 	}
 }
-exec("php fbmessage.php > /dev/null 2>&1 &");
+exec("php ".__DIR__."/fbmessage.php > /dev/null 2>&1 &");
 WriteLog("[fetch][info] runtime=".round((microtime(true)-$start), 6));

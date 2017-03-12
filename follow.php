@@ -123,6 +123,60 @@ foreach ($row as $data) {
 					}
 					break;
 
+				case '/show':
+					if (isset($cmd[1])) {
+						if (preg_match("/^\d+$/", $cmd[1]) == 0) {
+							SendMessage($tmid, "第1個參數錯誤\n".
+								"必須是一個正整數");
+							continue;
+						}
+						$n = (int)$cmd[1];
+						if ($n == 0) {
+							SendMessage($tmid, "第1個參數錯誤\n".
+								"必須是一個正整數");
+							continue;
+						}
+						if (isset($cmd[2])) {
+							SendMessage($tmid, "參數個數錯誤\n".
+								"此指令必須給出一個參數為通知的編號");
+							continue;
+						}
+						$sth = $G["db"]->prepare("SELECT * FROM `{$C['DBTBprefix']}news` WHERE `idx` = :idx");
+						$sth->bindValue(":idx", $n);
+					} else {
+						$sth = $G["db"]->prepare("SELECT * FROM `{$C['DBTBprefix']}news` ORDER BY `idx` DESC LIMIT 1");
+					}
+					$res = $sth->execute();
+					$news = $sth->fetch(PDO::FETCH_ASSOC);
+					if ($res) {
+						if ($news === false) {
+							SendMessage($tmid, "找不到此編號");
+							continue;
+						}
+						if (preg_match("/^(.+) <(.+)>$/", $news["from"], $m)) {
+							$fromemail = $m[2];
+						} else {
+							$fromemail = false;
+						}
+						require(__DIR__.'/function/mailfilter.php');
+						if ($fromemail === false || !MailFilter($fromemail)) {
+							$msg = "#".$news["idx"]."\n".
+								"此來自 ".$news["from"]." 的郵件已被過濾器攔截，因此無法查看，如果您認為這有誤，請回報";
+							SendMessage($tmid, $msg);
+						} else {
+							$msg = "#".$news["idx"]."\n".
+								$news["from"]."\n".
+								$news["subject"]."\n".
+								"----------------------------------------\n".
+								$news["content"]."\n";
+							SendMessage($tmid, $msg);
+						}
+					} else {
+						WriteLog("[follow][error][start][selnew] uid=".$uid);
+						SendMessage($tmid, "指令失敗");
+					}
+					break;
+
 				case '/help':
 					SendMessage($tmid, $M["/help"]);
 					break;

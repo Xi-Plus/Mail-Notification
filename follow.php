@@ -79,12 +79,15 @@ foreach ($row as $data) {
 			}
 			$tmid = $row["tmid"];
 			if (!isset($messaging['message']['text'])) {
-				SendMessage($tmid, $M["nottext"]);
+				SendMessage($tmid, "僅接受文字訊息");
 				continue;
 			}
 			$msg = $messaging['message']['text'];
 			if ($msg[0] !== "/") {
-				SendMessage($tmid, $M["notcommand"]);
+				SendMessage($tmid, "無法辨識的訊息\n".
+					"本粉專由機器人自動運作\n".
+					"啟用訊息通知輸入 /start\n".
+					"顯示所有命令輸入 /help");
 				continue;
 			}
 			$msg = str_replace("\n", " ", $msg);
@@ -93,33 +96,37 @@ foreach ($row as $data) {
 			switch ($cmd[0]) {
 				case '/start':
 					if (isset($cmd[1])) {
-						SendMessage($tmid, $M["/start_too_many_arg"]);
+						SendMessage($tmid, "參數個數錯誤\n".
+							"此指令不需要參數");
 						continue;
 					}
 					$sth = $G["db"]->prepare("UPDATE `{$C['DBTBprefix']}user` SET `fbmessage` = '1' WHERE `tmid` = :tmid");
 					$sth->bindValue(":tmid", $tmid);
 					$res = $sth->execute();
 					if ($res) {
-						SendMessage($tmid, $M["/start"]);
+						SendMessage($tmid, "已啟用訊息通知\n".
+							"欲取消請輸入 /stop");
 					} else {
 						WriteLog("[follow][error][start][upduse] uid=".$uid);
-						SendMessage($tmid, $M["fail"]);
+						SendMessage($tmid, "指令失敗");
 					}
 					break;
 				
 				case '/stop':
 					if (isset($cmd[1])) {
-						SendMessage($tmid, $M["/stop_too_many_arg"]);
+						SendMessage($tmid, "參數個數錯誤\n".
+							"此指令不需要參數");
 						continue;
 					}
 					$sth = $G["db"]->prepare("UPDATE `{$C['DBTBprefix']}user` SET `fbmessage` = '0' WHERE `tmid` = :tmid");
 					$sth->bindValue(":tmid", $tmid);
 					$res = $sth->execute();
 					if ($res) {
-						SendMessage($tmid, $M["/stop"]);
+						SendMessage($tmid, "已停用訊息通知\n".
+							"欲重新啟用請輸入 /start");
 					} else {
 						WriteLog("[follow][error][stop][upduse] uid=".$uid);
-						SendMessage($tmid, $M["fail"]);
+						SendMessage($tmid, "指令失敗");
 					}
 					break;
 
@@ -178,11 +185,16 @@ foreach ($row as $data) {
 					break;
 
 				case '/help':
-					SendMessage($tmid, $M["/help"]);
+					SendMessage($tmid, "可用命令\n".
+						"/start 啟用訊息通知\n".
+						"/stop 停用訊息通知\n".
+						"/show 顯示郵件內容\n".
+						"/help 顯示所有命令");
 					break;
 				
 				default:
-					SendMessage($tmid, $M["wrongcommand"]);
+					SendMessage($tmid, "無法辨識命令\n".
+						"輸入 /help 取得可用命令");
 					break;
 			}
 		}

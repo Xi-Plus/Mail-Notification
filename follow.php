@@ -175,7 +175,8 @@ foreach ($row as $data) {
 								$news["from"]."\n".
 								$news["subject"]."\n".
 								"----------------------------------------\n".
-								$news["content"]."\n";
+								$news["content"]."\n\n".
+								"輸入 /show ".$news["idx"]." 顯示郵件內容";
 							SendMessage($tmid, $msg);
 						}
 					} else {
@@ -185,11 +186,41 @@ foreach ($row as $data) {
 					break;
 
 				case '/help':
-					SendMessage($tmid, "可用命令\n".
+					if (isset($cmd[2])) {
+						$msg = "參數過多\n".
+							"必須給出一個參數為指令的名稱";
+					} else if (isset($cmd[1])) {
+						switch ($cmd[1]) {
+							case 'start':
+								$msg = "/start 啟用訊息通知";
+								break;
+							
+							case 'stop':
+								$msg = "/start 停用訊息通知";
+								break;
+							
+							case 'show':
+								$msg = "/show 顯示最後一封郵件內容\n".
+									 "/show [編號] 顯示指定編號郵件內容\n";
+								break;
+							
+							case 'help':
+								$msg = "/help 顯示所有命令";
+								break;
+							
+							default:
+								$msg = "查無此指令";
+								break;
+						}
+					} else {
+						$msg = "可用命令\n".
 						"/start 啟用訊息通知\n".
 						"/stop 停用訊息通知\n".
 						"/show 顯示郵件內容\n".
-						"/help 顯示所有命令");
+						"/help 顯示所有命令\n\n".
+						"/help [命令] 顯示命令的詳細用法";
+					}
+					SendMessage($tmid, $msg);
 					break;
 				
 				default:

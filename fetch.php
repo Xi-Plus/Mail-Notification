@@ -116,11 +116,17 @@ function dfspart($part, $ans) {
 	return $ans;
 }
 
-$last_id = file_get_contents(__DIR__."/data/last_id.txt");
+$sth = $G["db"]->prepare("SELECT `messageid` FROM `{$C['DBTBprefix']}news` ORDER BY `idx` DESC LIMIT 1");
+$res = $sth->execute();
+$row = $sth->fetch(PDO::FETCH_ASSOC);
+if ($row === false) {
+	$last_id = "";
+} else {
+	$last_id = $row["messageid"];
+}
 $messages = listMessages($service, $last_id);
 if (count($messages) > 0) {
 	WriteLog("[fetch][info] get ".count($messages));
-	file_put_contents(__DIR__."/data/last_id.txt", $messages[0]["id"]);
 	foreach (array_reverse($messages) as $message) {
 		$subject = "";
 		$from = "";
@@ -133,7 +139,6 @@ if (count($messages) > 0) {
 			}
 		}
 		$content = "";
-		echo $from."\n";
 		$datas = dfspart($message["modelData"]["payload"], array());
 		if (isset($datas["text/plain"])) {
 			$content = $datas["text/plain"][0]["data"];
@@ -148,15 +153,17 @@ if (count($messages) > 0) {
 		$content = preg_replace("/^\n+/", "", $content);
 		$content = preg_replace("/\n+$/", "", $content);
 
-		$sth = $G["db"]->prepare("INSERT INTO `{$C['DBTBprefix']}news` (`messageid`, `from`, `subject`, `content`, `hash`) VALUES (:messageid, :from, :subject, :content, :hash)");
-		$hash = md5(json_encode(array("messageid"=>$message["id"], "subject"=>$subject, "content"=>$content)));
+		$sth = $G["db"]->prepare("INSERT INTO `{$C['DBTBprefix']}news` (`messageid`, `from`, `subject`, `content`, `time`, `hash`) VALUES (:messageid, :from, :subject, :content, :time, :hash)");
+		$hash = md5(json_encode(array("messageid"=>$message["id"], "subject"=>$subject, "content"=>$content, "time"=>$time)));
 		$sth->bindValue(":messageid", $message["id"]);
 		$sth->bindValue(":from", $from);
 		$sth->bindValue(":subject", $subject);
 		$sth->bindValue(":content", $content);
+		$sth->bindValue(":time", $time);
 		$sth->bindValue(":hash", $hash);
 		$res = $sth->execute();
 		if ($res === false) {
+			var_dump($sth->errorInfo());
 			WriteLog("[fetch][error][insnew] messageid=".$message["id"]);
 		}
 	}

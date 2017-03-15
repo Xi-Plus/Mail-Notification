@@ -16,6 +16,6 @@ if ($method == 'GET' && $_GET['hub_mode'] == 'subscribe' &&  $_GET['hub_verify_t
 	$sth->bindValue(":input", $inputJSON);
 	$sth->bindValue(":hash", $hash);
 	$res = $sth->execute();
-	exec("php follow.php > /dev/null 2>&1 &");
+	exec("php ".__DIR__."/follow.php > /dev/null 2>&1 &");
 }
 WriteLog("[wh][info] runtime=".round((microtime(true)-$start), 6));

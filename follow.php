@@ -175,8 +175,7 @@ foreach ($row as $data) {
 								$news["from"]."\n".
 								$news["subject"]."\n".
 								"----------------------------------------\n".
-								$news["content"]."\n\n".
-								"輸入 /show ".$news["idx"]." 顯示郵件內容";
+								$news["content"];
 							SendMessage($tmid, $msg);
 						}
 					} else {

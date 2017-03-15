@@ -33,6 +33,7 @@ CREATE TABLE `kuas_notification_news` (
   `subject` varchar(255) NOT NULL,
   `content` text NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fbpost` tinyint(4) NOT NULL DEFAULT '0',
   `fbmessage` tinyint(1) NOT NULL DEFAULT '0',
   `hash` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

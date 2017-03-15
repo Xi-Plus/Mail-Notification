@@ -168,5 +168,4 @@ if (count($messages) > 0) {
 		}
 	}
 }
-exec("php ".__DIR__."/fbmessage.php > /dev/null 2>&1 &");
 WriteLog("[fetch][info] runtime=".round((microtime(true)-$start), 6));

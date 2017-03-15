@@ -4,6 +4,7 @@ function MailFilter($mail) {
 		"bcoffice01@kuas.edu.tw", //bcoffice01
 		"caoffice01@kuas.edu.tw", //教務處
 		"ccoffice02@kuas.edu.tw", //綜合教務組
+		"cdoffice02@kuas.edu.tw", //教學發展中心
 		"dboffice01@kuas.edu.tw", //學務處諮商輔導中心
 		"dcoffice01@kuas.edu.tw", //學務處生輔組
 		"ddoffice01@kuas.edu.tw", //課外活動組

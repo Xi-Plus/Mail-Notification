@@ -26,13 +26,14 @@ function MailFilter($mail) {
 		"laoffice01@kuas.edu.tw", //環安衛中心 環保組
 		"oboffice01@kuas.edu.tw", //高雄應用科技大學圖書館
 		"pboffice01@kuas.edu.tw", //計網中心行政諮詢組
+		"vaoffice01@kuas.edu.tw", //管理學院辦公室
 		"veoffice01@kuas.edu.tw", //金融系
 		"waoffice01@kuas.edu.tw", //電資學院
 		"weoffice01@kuas.edu.tw", //光通所辦公室
 		"xboffice01@kuas.edu.tw", //通識中心教學組辦公室
 		"yaoffice01@kuas.edu.tw", //yaoffice01
 		"zaoffice02@kuas.edu.tw", //育成中心
-		"zkoffice02@kuas.edu.tw" //國立高雄應用科技大學產學合作中心
+		"zkoffice02@kuas.edu.tw"  //國立高雄應用科技大學產學合作中心
 	);
 	if (in_array($mail, $whitelist)) {
 		return true;

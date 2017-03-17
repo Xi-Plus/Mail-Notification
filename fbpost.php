@@ -26,9 +26,8 @@ foreach ($row as $news) {
 	} else {
 		$msg = "#".$news["idx"]."\n".
 			$news["from"]."\n".
-			$news["subject"]."\n".
-			"----------------------------------------\n".
-			$news["content"];
+			$news["subject"]."\n\n".
+			"向粉專傳送訊息 /show ".$news["idx"]." 查看郵件內容";
 	}
 
 	if ($msg !== false) {

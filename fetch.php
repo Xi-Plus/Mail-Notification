@@ -154,7 +154,7 @@ if (count($messages) > 0) {
 		$content = preg_replace("/\n+$/", "", $content);
 
 		$sth = $G["db"]->prepare("INSERT INTO `{$C['DBTBprefix']}news` (`messageid`, `from`, `subject`, `content`, `time`, `hash`) VALUES (:messageid, :from, :subject, :content, :time, :hash)");
-		$hash = md5(json_encode(array("messageid"=>$message["id"], "subject"=>$subject, "content"=>$content, "time"=>$time)));
+		$hash = md5(serialize(array("messageid"=>$message["id"], "from"=>$from, "subject"=>$subject, "content"=>$content, "time"=>$time)));
 		$sth->bindValue(":messageid", $message["id"]);
 		$sth->bindValue(":from", $from);
 		$sth->bindValue(":subject", $subject);

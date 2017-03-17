@@ -8,7 +8,6 @@ require(__DIR__.'/function/log.php');
 require($C["google_apl_client_libraries_path"]);
 set_time_limit(600);
 
-WriteLog("[fetch][info] start");
 $start = microtime(true);
 $time = date("Y-m-d H:i:s");
 
@@ -163,8 +162,7 @@ if (count($messages) > 0) {
 		$sth->bindValue(":hash", $hash);
 		$res = $sth->execute();
 		if ($res === false) {
-			var_dump($sth->errorInfo());
-			WriteLog("[fetch][error][insnew] messageid=".$message["id"]);
+			WriteLog("[fetch][error][insnew] messageid=".$message["id"]." msg=".json_encode($sth->errorInfo()));
 		}
 	}
 }

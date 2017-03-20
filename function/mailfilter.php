@@ -21,6 +21,7 @@ function MailFilter($mail) {
 		"fcoffice01@kuas.edu.tw", //研發處技術合作組
 		"ieoffice02@kuas.edu.tw", //推廣教育中心ie02
 		"jcoffice01@kuas.edu.tw", //進修學院學務組
+		"jktuhs@kuas.edu.tw",     //人文與社會科學學刊
 		"khoffice01@kuas.edu.tw", //khoffice01
 		"kuassa@kuas.edu.tw",     //學生會
 		"laoffice01@kuas.edu.tw", //環安衛中心 環保組

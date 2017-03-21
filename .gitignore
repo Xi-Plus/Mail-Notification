@@ -1,2 +1,3 @@
 config/config.php
 data/client_secret.json
+data/credentials.json

@@ -12,7 +12,7 @@ $start = microtime(true);
 $time = date("Y-m-d H:i:s");
 
 define('APPLICATION_NAME', 'Gmail API PHP Quickstart');
-define('CREDENTIALS_PATH', '~/.credentials/gmail-php-quickstart.json');
+define('CREDENTIALS_PATH', __DIR__.'/data/credentials.json');
 define('CLIENT_SECRET_PATH', __DIR__ . '/data/client_secret.json');
 define('SCOPES', implode(' ', array(
 	Google_Service_Gmail::GMAIL_READONLY)
@@ -25,7 +25,7 @@ function getClient() {
 	$client->setAuthConfig(CLIENT_SECRET_PATH);
 	$client->setAccessType('offline');
 
-	$credentialsPath = expandHomeDirectory(CREDENTIALS_PATH);
+	$credentialsPath = CREDENTIALS_PATH;
 	if (file_exists($credentialsPath)) {
 		$accessToken = json_decode(file_get_contents($credentialsPath), true);
 	} else {
@@ -49,14 +49,6 @@ function getClient() {
 		file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
 	}
 	return $client;
-}
-
-function expandHomeDirectory($path) {
-	$homeDirectory = getenv('HOME');
-	if (empty($homeDirectory)) {
-		$homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
-	}
-	return str_replace('~', realpath($homeDirectory), $path);
 }
 
 $client = getClient();

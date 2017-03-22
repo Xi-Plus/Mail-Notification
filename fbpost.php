@@ -21,8 +21,11 @@ foreach ($row as $news) {
 	} else {
 		$fromemail = false;
 	}
-	if ($fromemail === false || !MailFilter($fromemail)) {
-		$msg = false;
+	if ($fromemail === false || MailFilter($fromemail) == 0) {
+		continue;
+	}
+	if (MailFilter($fromemail) == -1) {
+		$msg == false;
 	} else {
 		$msg = "#".$news["idx"]."\n".
 			$news["from"]."\n".

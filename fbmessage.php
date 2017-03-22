@@ -24,8 +24,10 @@ foreach ($newss as $news) {
 	} else {
 		$fromemail = false;
 	}
-	if ($fromemail === false || !MailFilter($fromemail)) {
+	if ($fromemail === false || MailFilter($fromemail) == 0) {
 		$msg = "有一封來自 ".$news["from"]." 的郵件已被過濾器攔截，如果您認為這有誤，請回報";
+	} else if (MailFilter($fromemail) == -1) {
+		$msg = false;
 	} else {
 		$msg = "#".$news["idx"]."\n".
 			$news["from"]."\n".
@@ -33,17 +35,20 @@ foreach ($newss as $news) {
 			"輸入 /show ".$news["idx"]." 顯示郵件內容";
 	}
 
-	foreach ($users as $user) {
-		$hash = md5(json_encode(array("tmid"=>$user["tmid"], "message"=>$msg, "time"=>$news["time"])));
-		$sthmsg->bindValue(":tmid", $user["tmid"]);
-		$sthmsg->bindValue(":message", $msg);
-		$sthmsg->bindValue(":time", $news["time"]);
-		$sthmsg->bindValue(":hash", $hash);
-		$res = $sthmsg->execute();
-		if ($res === false) {
-			WriteLog("[fbmsg][error][insque] tmid=".$user["tmid"]." msg=".$msg);
+	if ($msg !== false) {
+		foreach ($users as $user) {
+			$hash = md5(json_encode(array("tmid"=>$user["tmid"], "message"=>$msg, "time"=>$news["time"])));
+			$sthmsg->bindValue(":tmid", $user["tmid"]);
+			$sthmsg->bindValue(":message", $msg);
+			$sthmsg->bindValue(":time", $news["time"]);
+			$sthmsg->bindValue(":hash", $hash);
+			$res = $sthmsg->execute();
+			if ($res === false) {
+				WriteLog("[fbmsg][error][insque] tmid=".$user["tmid"]." msg=".$msg);
+			}
 		}
 	}
+	
 	$sthok->bindValue(":hash", $news["hash"]);
 	$res = $sthok->execute();
 	if ($res === false) {

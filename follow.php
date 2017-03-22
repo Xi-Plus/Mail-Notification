@@ -166,9 +166,13 @@ foreach ($row as $data) {
 							$fromemail = false;
 						}
 						require(__DIR__.'/function/mailfilter.php');
-						if ($fromemail === false || !MailFilter($fromemail)) {
+						if ($fromemail === false || MailFilter($fromemail) == 0) {
 							$msg = "#".$news["idx"]."\n".
-								"此來自 ".$news["from"]." 的郵件已被過濾器攔截，因此無法查看，如果您認為這有誤，請回報";
+								"此來自 ".$news["from"]." 的郵件已被過濾器自動攔截，暫時無法查看，如果您認為這有誤，請回報";
+							SendMessage($tmid, $msg);
+						} else if (MailFilter($fromemail) == -1) {
+							$msg = "#".$news["idx"]."\n".
+								"此郵件已被封鎖，因此無法查看，如果您認為這有誤，請回報";
 							SendMessage($tmid, $msg);
 						} else {
 							$msg = "#".$news["idx"]."\n".

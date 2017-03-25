@@ -44,9 +44,11 @@ INSERT INTO `kuas_notification_filter` (`no`, `regex`, `type`, `comment`) VALUES
 (1, '^pboffice01@kuas.edu.tw$', 1, '計網中心行政諮詢組'),
 (1, '^vaoffice01@kuas.edu.tw$', 1, '管理學院辦公室'),
 (1, '^veoffice01@kuas.edu.tw$', 1, '金融系'),
+(1, '^vgoffice01@kuas.edu.tw$', 1, '觀光系主任辦公室'),
 (1, '^waoffice01@kuas.edu.tw$', 1, '電資學院'),
 (1, '^weoffice01@kuas.edu.tw$', 1, '光通所辦公室'),
 (1, '^xboffice01@kuas.edu.tw$', 1, '通識中心教學組辦公室'),
+(1, '^xcoffice01@kuas.edu.tw$', 1, '通識中心活動組辦公室'),
 (1, '^yaoffice01@kuas.edu.tw$', 1, '燕巢校務部'),
 (1, '^zaoffice02@kuas.edu.tw$', 1, '育成中心'),
 (1, '^zkoffice02@kuas.edu.tw$', 1, '國立高雄應用科技大學產學合作中心');

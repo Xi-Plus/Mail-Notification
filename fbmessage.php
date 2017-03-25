@@ -59,12 +59,17 @@ foreach ($newss as $news) {
 $sth = $G["db"]->prepare("SELECT * FROM `{$C['DBTBprefix']}msgqueue` ORDER BY `time` ASC");
 $sth->execute();
 $row = $sth->fetchAll(PDO::FETCH_ASSOC);
-$sth = $G["db"]->prepare("DELETE FROM `{$C['DBTBprefix']}msgqueue` WHERE `hash` = :hash");
+
+$sthdel = $G["db"]->prepare("DELETE FROM `{$C['DBTBprefix']}msgqueue` WHERE `hash` = :hash");
+$sthread = $G["db"]->prepare("UPDATE `{$C['DBTBprefix']}user` SET `lastread` = :lastread WHERE `tmid` = :tmid");
 foreach ($row as $msg) {
 	$res = SendMessage($msg["tmid"], $msg["message"]);
+	$sthread->bindValue(":lastread", date("Y-m-d H:i:s"));
+	$sthread->bindValue(":tmid", $msg["tmid"]);
+	$sthread->execute();
 	if ($res) {
-		$sth->bindValue(":hash", $msg["hash"]);
-		$res = $sth->execute();
+		$sthdel->bindValue(":hash", $msg["hash"]);
+		$res = $sthdel->execute();
 		if ($res === false) {
 			WriteLog("[fbmsg][error][delque] hash=".$msg["hash"]);
 		}

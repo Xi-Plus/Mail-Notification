@@ -88,7 +88,8 @@ CREATE TABLE `kuas_notification_user` (
   `tmid` varchar(255) NOT NULL,
   `sid` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `fbmessage` tinyint(1) NOT NULL DEFAULT '0'
+  `fbmessage` tinyint(1) NOT NULL DEFAULT '0',
+  `lastread` timestamp NOT NULL DEFAULT '2038-01-19 03:14:07'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

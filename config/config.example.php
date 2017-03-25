@@ -11,6 +11,9 @@ $C['DBuser'] = 'user';
 $C['DBpass'] = 'pass';
 $C['DBTBprefix'] = 'tnfsh_notification_';
 
+$C['UnreadLimit'] = 86400;
+$C['UnreadLimitText'] = "24小時";
+
 $C['google_apl_client_libraries_path'] = __DIR__ . '/../function/google-api-php-client/vendor/autoload.php';
 
 $C["allowsapi"] = array("cli");

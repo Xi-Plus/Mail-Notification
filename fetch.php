@@ -135,6 +135,7 @@ if (count($messages) > 0) {
 			$content = $datas["text/html"][0]["data"];
 			$content = base64url_decode($content);
 			$content = str_replace("</p>", "</p>\n\n", $content);
+			$content = htmlspecialchars_decode($content);
 			$content = strip_tags($content);
 		} else if (isset($datas["text/plain"])) {
 			$content = $datas["text/plain"][0]["data"];

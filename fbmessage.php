@@ -32,8 +32,7 @@ foreach ($newss as $news) {
 	} else {
 		$msg = "#".$news["idx"]."\n".
 			$news["from"]."\n".
-			$news["subject"]."\n\n".
-			"輸入 /show ".$news["idx"]." 顯示郵件內容";
+			$news["subject"];
 	}
 
 	if ($msg !== false) {

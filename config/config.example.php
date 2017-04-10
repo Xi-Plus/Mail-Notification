@@ -20,4 +20,4 @@ $C['google_apl_client_libraries_path'] = __DIR__ . '/../function/google-api-php-
 
 $C["allowsapi"] = array("cli");
 
-$G["db"] = new PDO ('mysql:host='.$C["DBhost"].';dbname='.$C["DBname"].';charset=utf8', $C["DBuser"], $C["DBpass"]);
+$G["db"] = new PDO ('mysql:host='.$C["DBhost"].';dbname='.$C["DBname"].';charset=utf8mb4', $C["DBuser"], $C["DBpass"]);

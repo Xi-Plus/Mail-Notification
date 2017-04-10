@@ -102,6 +102,9 @@ function dfspart($part, $ans) {
 		if (!isset($ans[$part["mimeType"]])) {
 			$ans[$part["mimeType"]] = array();
 		}
+		if (isset($part["body"]["data"])) {
+			$part["body"]["data"] = base64url_decode($part["body"]["data"]);
+		}
 		$ans[$part["mimeType"]] []= $part["body"];
 	}
 	return $ans;
@@ -133,16 +136,15 @@ if (count($messages) > 0) {
 		$datas = dfspart($message["modelData"]["payload"], array());
 		if (isset($datas["text/html"])) {
 			$content = $datas["text/html"][0]["data"];
-			$content = base64url_decode($content);
 			$content = str_replace("</p>", "</p>\n\n", $content);
+			$content = str_replace("<br>", "\n", $content);
 			$content = htmlspecialchars_decode($content);
 			$content = strip_tags($content);
 		} else if (isset($datas["text/plain"])) {
 			$content = $datas["text/plain"][0]["data"];
-			$content = base64url_decode($content);
 		}
 		$content = str_replace("\r", "", $content);
-		$content = str_replace(array("\xC2\xA0", "\t", "　"), " ", $content);
+		$content = str_replace(array("\xC2\xA0", "\t", "　", "&nbsp;"), " ", $content);
 		$content = preg_replace("/ +/", " ", $content);
 		$content = preg_replace("/^ $/m", "", $content);
 		$content = preg_replace("/\n{3,}/", "\n\n", $content);

@@ -19,6 +19,7 @@ INSERT INTO `kuas_notification_filter` (`no`, `regex`, `type`, `comment`) VALUES
 (1, '^bdoffice01@kuas.edu.tw$', 1, '秘書室校務企劃組'),
 (1, '^caoffice01@kuas.edu.tw$', 1, '教務處'),
 (1, '^ccoffice02@kuas.edu.tw$', 1, '綜合教務組'),
+(1, '^cdoffice01@kuas.edu.tw$', 1, '教學發展中心'),
 (1, '^cdoffice02@kuas.edu.tw$', 1, '教學發展中心'),
 (1, '^cgoffice01@kuas.edu.tw$', 1, '南區區域教學資源中心'),
 (1, '^dboffice01@kuas.edu.tw$', 1, '學務處諮商輔導中心'),
@@ -50,9 +51,12 @@ INSERT INTO `kuas_notification_filter` (`no`, `regex`, `type`, `comment`) VALUES
 (1, '^xboffice01@kuas.edu.tw$', 1, '通識中心教學組辦公室'),
 (1, '^xcoffice01@kuas.edu.tw$', 1, '通識中心活動組辦公室'),
 (1, '^yaoffice01@kuas.edu.tw$', 1, '燕巢校務部'),
+(1, '^zaoffice01@kuas.edu.tw$', 1, '創新育成中心'),
 (1, '^zaoffice02@kuas.edu.tw$', 1, '育成中心'),
-(1, '^zkoffice02@kuas.edu.tw$', 1, '國立高雄應用科技大學產學合作中心');
-(2, '@github.com$', -1, 'Github'),
+(1, '^zkoffice02@kuas.edu.tw$', 1, '國立高雄應用科技大學產學合作中心'),
+(2, '@accounts.google.com$', -1, 'Google'),
+(2, '^\\d+@gm.kuas.edu.tw$', -1, 'kuas student'),
+(2, '^cls@kuas.edu.tw$', -1, '雲端教學與學習平台');
 
 CREATE TABLE `kuas_notification_input` (
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -62,7 +66,7 @@ CREATE TABLE `kuas_notification_input` (
 
 CREATE TABLE `kuas_notification_log` (
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `message` text NOT NULL,
+  `message` text CHARACTER SET utf8mb4 NOT NULL,
   `hash` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -77,8 +81,8 @@ CREATE TABLE `kuas_notification_news` (
   `idx` int(11) NOT NULL,
   `messageid` varchar(20) NOT NULL,
   `from` varchar(255) NOT NULL,
-  `subject` varchar(255) NOT NULL,
-  `content` text NOT NULL,
+  `subject` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fbpost` tinyint(4) NOT NULL DEFAULT '0',
   `fbmessage` tinyint(1) NOT NULL DEFAULT '0',

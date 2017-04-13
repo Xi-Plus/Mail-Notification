@@ -83,11 +83,14 @@ foreach ($row as $data) {
 				}
 			}
 			$tmid = $row["tmid"];
+			$sth = $G["db"]->prepare("UPDATE `{$C['DBTBprefix']}user` SET `lastread` = :lastread WHERE `tmid` = :tmid");
+			$sth->bindValue(":lastread", "2038-01-19 03:04:17");
+			$sth->bindValue(":tmid", $tmid);
+			$res = $sth->execute();
+			if ($res === false) {
+				WriteLog("[follow][error][updlr] tmid=".$tmid);
+			}
 			if (isset($messaging['read'])) {
-				$sth = $G["db"]->prepare("UPDATE `{$C['DBTBprefix']}user` SET `lastread` = :lastread WHERE `tmid` = :tmid");
-				$sth->bindValue(":lastread", "2038-01-19 03:04:17");
-				$sth->bindValue(":tmid", $tmid);
-				$res = $sth->execute();
 				continue;
 			}
 			if (!isset($messaging['message']['text'])) {

@@ -203,6 +203,58 @@ foreach ($row as $data) {
 					}
 					break;
 
+				case '/search':
+					if (!isset($cmd[1])) {
+						SendMessage($tmid, "參數個數錯誤\n".
+							"此指令必須給出一個參數為搜尋的詞語");
+						continue;
+					}
+					if (isset($cmd[2])) {
+						SendMessage($tmid, "參數個數錯誤\n".
+							"此指令必須給出一個參數為通知的編號\n".
+							"不可包含空白");
+						continue;
+					}
+					$sth = $G["db"]->prepare("SELECT * FROM `{$C['DBTBprefix']}news` WHERE `subject` REGEXP :subject ORDER BY `idx` DESC LIMIT ".$C['SearchLimit']);
+					$sth->bindValue(":subject", $cmd[1]);
+					$res = $sth->execute();
+					$newss = $sth->fetchAll(PDO::FETCH_ASSOC);
+					if ($res) {
+						if ($newss === false) {
+							SendMessage($tmid, "找不到任何結果");
+							continue;
+						}
+						$msg = "";
+						require(__DIR__.'/function/mailfilter.php');
+						foreach (array_reverse($newss) as $news) {
+							if (preg_match("/^(.+) <(.+)>$/", $news["from"], $m)) {
+								$fromemail = $m[2];
+							} else {
+								$fromemail = false;
+							}
+							if ($fromemail === false || MailFilter($fromemail) == 0) {
+								$msg .= "#".$news["idx"]."\n".
+									"此來自 ".$news["from"]." 的郵件已被過濾器自動攔截，暫時無法查看，如果您認為這有誤，請回報\n";
+							} else if (MailFilter($fromemail) == -1) {
+								$msg .= "#".$news["idx"]."\n".
+									"此郵件已被封鎖，因此無法查看，如果您認為這有誤，請回報\n";
+							} else {
+								$msg .= "#".$news["idx"]." ".$news["subject"]."\n";
+							}
+						}
+						if ($msg === "") {
+							SendMessage($tmid, "找不到任何結果");
+							continue;
+						}
+						$msg = "搜尋：".$cmd[1]."\n".
+							$msg;
+						SendMessage($tmid, $msg);
+					} else {
+						WriteLog("[follow][error][start][selnew] uid=".$uid);
+						SendMessage($tmid, "指令失敗");
+					}
+					break;
+
 				case '/help':
 					if (isset($cmd[2])) {
 						$msg = "參數過多\n".
@@ -222,6 +274,12 @@ foreach ($row as $data) {
 									 "/show [編號] 顯示指定編號郵件內容\n";
 								break;
 							
+							case 'search':
+								$msg = "/search [文字] 搜尋郵件標題\n".
+									"此命令最多顯示".$C['SearchLimit']."筆結果\n".
+									"此命令支援正規表達式";
+								break;
+							
 							case 'help':
 								$msg = "/help 顯示所有命令";
 								break;
@@ -235,6 +293,7 @@ foreach ($row as $data) {
 						"/start 啟用訊息通知\n".
 						"/stop 停用訊息通知\n".
 						"/show 顯示郵件內容\n".
+						"/search 搜尋郵件標題\n".
 						"/help 顯示所有命令\n\n".
 						"/help [命令] 顯示命令的詳細用法";
 					}

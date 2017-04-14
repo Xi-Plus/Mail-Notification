@@ -215,7 +215,7 @@ foreach ($row as $data) {
 							"不可包含空白");
 						continue;
 					}
-					$sth = $G["db"]->prepare("SELECT * FROM `{$C['DBTBprefix']}news` WHERE `subject` REGEXP :subject ORDER BY `idx` DESC LIMIT ".$C['SearchLimit']);
+					$sth = $G["db"]->prepare("SELECT * FROM `{$C['DBTBprefix']}news` WHERE `subject` REGEXP :subject ORDER BY `idx` DESC");
 					$sth->bindValue(":subject", $cmd[1]);
 					$res = $sth->execute();
 					$newss = $sth->fetchAll(PDO::FETCH_ASSOC);
@@ -226,6 +226,7 @@ foreach ($row as $data) {
 						}
 						$msg = "";
 						require(__DIR__.'/function/mailfilter.php');
+						$count = 0;
 						foreach (array_reverse($newss) as $news) {
 							if (preg_match("/^(.+) <(.+)>$/", $news["from"], $m)) {
 								$fromemail = $m[2];
@@ -240,13 +241,17 @@ foreach ($row as $data) {
 									"此郵件已被封鎖，因此無法查看，如果您認為這有誤，請回報\n";
 							} else {
 								$msg .= "#".$news["idx"]." ".$news["subject"]."\n";
+								$count ++;
+							}
+							if ($count >= $C['SearchLimit']) {
+								break;
 							}
 						}
 						if ($msg === "") {
 							SendMessage($tmid, "找不到任何結果");
 							continue;
 						}
-						$msg = "搜尋：".$cmd[1]."\n".
+						$msg = "搜尋：".$cmd[1]." 找到".count($newss)."筆結果\n".
 							$msg;
 						SendMessage($tmid, $msg);
 					} else {

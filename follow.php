@@ -227,20 +227,18 @@ foreach ($row as $data) {
 						$msg = "";
 						require(__DIR__.'/function/mailfilter.php');
 						$count = 0;
-						foreach (array_reverse($newss) as $news) {
+						foreach ($newss as $news) {
 							if (preg_match("/^(.+) <(.+)>$/", $news["from"], $m)) {
 								$fromemail = $m[2];
 							} else {
 								$fromemail = false;
 							}
 							if ($fromemail === false || MailFilter($fromemail) == 0) {
-								$msg .= "#".$news["idx"]."\n".
-									"此來自 ".$news["from"]." 的郵件已被過濾器自動攔截，暫時無法查看，如果您認為這有誤，請回報\n";
+								$msg = "#".$news["idx"]." 此來自 ".$news["from"]." 的郵件已被過濾器自動攔截，暫時無法查看，如果您認為這有誤，請回報\n".$msg;
 							} else if (MailFilter($fromemail) == -1) {
-								$msg .= "#".$news["idx"]."\n".
-									"此郵件已被封鎖，因此無法查看，如果您認為這有誤，請回報\n";
+								$msg = "#".$news["idx"]." 此郵件已被封鎖，因此無法查看，如果您認為這有誤，請回報\n".$msg;
 							} else {
-								$msg .= "#".$news["idx"]." ".$news["subject"]."\n";
+								$msg = "#".$news["idx"]." ".$news["subject"]."\n".$msg;
 								$count ++;
 							}
 							if ($count >= $C['SearchLimit']) {

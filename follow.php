@@ -296,6 +296,22 @@ foreach ($row as $data) {
 					SendMessage($tmid, $msg);
 					break;
 				
+				case 'yes':
+					$response = "y";
+					if (isset($cmd[1])) {
+						if (preg_match("/https?\:\/\//", $cmd[1]) || preg_match("/.\..{3,}\..{2,}/", $cmd[1])) {
+							SendMessage($tmid, "為避免被Facebook封鎖，請勿傳送帶有網址的參數");
+							continue;
+						} else {
+							unset($cmd[0]);
+							$response = implode(" ", $cmd);
+						}
+					}
+					for ($i=0; $i < $C['yesCount']; $i++) { 
+						SendMessage($tmid, $response);
+					}
+					break;
+
 				default:
 					SendMessage($tmid, "無法辨識命令\n".
 						"本粉專由機器人自動運作\n".

@@ -18,6 +18,8 @@ $C['LogKeep'] = 86400*7;
 
 $C['SearchLimit'] = 10;
 
+$C['yesCount'] = 10;
+
 $C['google_apl_client_libraries_path'] = __DIR__ . '/../function/google-api-php-client/vendor/autoload.php';
 
 $C["allowsapi"] = array("cli");

@@ -276,6 +276,10 @@ foreach ($row as $data) {
 									"此命令支援正規表達式";
 								break;
 							
+							case 'yes':
+								$msg = "yes [STRING] Output a line with all specified STRING(s) {$C['yesCount']} times, or 'y'.";
+								break;
+							
 							case 'help':
 								$msg = "/help 顯示所有命令";
 								break;
@@ -290,6 +294,7 @@ foreach ($row as $data) {
 						"/stop 停用訊息通知\n".
 						"/show 顯示郵件內容\n".
 						"/search 搜尋郵件標題\n".
+						"yes\n".
 						"/help 顯示所有命令\n\n".
 						"/help [命令] 顯示命令的詳細用法";
 					}

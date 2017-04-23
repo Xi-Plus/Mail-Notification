@@ -98,13 +98,6 @@ foreach ($row as $data) {
 				continue;
 			}
 			$msg = $messaging['message']['text'];
-			if ($msg[0] !== "/") {
-				SendMessage($tmid, "無法辨識的訊息\n".
-					"本粉專由機器人自動運作\n".
-					"啟用訊息通知輸入 /start\n".
-					"顯示所有命令輸入 /help");
-				continue;
-			}
 			$msg = str_replace("\n", " ", $msg);
 			$msg = preg_replace("/\s+/", " ", $msg);
 			$cmd = explode(" ", $msg);
@@ -305,7 +298,9 @@ foreach ($row as $data) {
 				
 				default:
 					SendMessage($tmid, "無法辨識命令\n".
-						"輸入 /help 取得可用命令");
+						"本粉專由機器人自動運作\n".
+						"啟用訊息通知輸入 /start\n".
+						"顯示所有命令輸入 /help");
 					break;
 			}
 		}

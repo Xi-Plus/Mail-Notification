@@ -93,6 +93,10 @@ foreach ($row as $data) {
 			if (isset($messaging['read'])) {
 				continue;
 			}
+			if (isset($messaging['message']['sticker_id'])) {
+				SendMessage($tmid, "感謝您的支持");
+				continue;
+			}
 			if (!isset($messaging['message']['text'])) {
 				SendMessage($tmid, "僅接受文字訊息");
 				continue;

@@ -105,8 +105,9 @@ foreach ($row as $data) {
 			$msg = str_replace("\n", " ", $msg);
 			$msg = preg_replace("/\s+/", " ", $msg);
 			$cmd = explode(" ", $msg);
+			$cmd[0] = strtolower($cmd[0]);
 			switch ($cmd[0]) {
-				case '/start':
+				case 'start':
 					if (isset($cmd[1])) {
 						SendMessage($tmid, "參數個數錯誤\n".
 							"此指令不需要參數");
@@ -117,14 +118,14 @@ foreach ($row as $data) {
 					$res = $sth->execute();
 					if ($res) {
 						SendMessage($tmid, "已啟用訊息通知\n".
-							"欲取消請輸入 /stop");
+							"欲取消請輸入 stop");
 					} else {
 						WriteLog("[follow][error][start][upduse] uid=".$uid);
 						SendMessage($tmid, "指令失敗");
 					}
 					break;
 				
-				case '/stop':
+				case 'stop':
 					if (isset($cmd[1])) {
 						SendMessage($tmid, "參數個數錯誤\n".
 							"此指令不需要參數");
@@ -135,14 +136,14 @@ foreach ($row as $data) {
 					$res = $sth->execute();
 					if ($res) {
 						SendMessage($tmid, "已停用訊息通知\n".
-							"欲重新啟用請輸入 /start");
+							"欲重新啟用請輸入 start");
 					} else {
 						WriteLog("[follow][error][stop][upduse] uid=".$uid);
 						SendMessage($tmid, "指令失敗");
 					}
 					break;
 
-				case '/show':
+				case 'show':
 					if (isset($cmd[1])) {
 						if (preg_match("/^\d+$/", $cmd[1]) == 0) {
 							SendMessage($tmid, "第1個參數錯誤\n".
@@ -200,7 +201,7 @@ foreach ($row as $data) {
 					}
 					break;
 
-				case '/search':
+				case 'search':
 					if (!isset($cmd[1])) {
 						SendMessage($tmid, "參數個數錯誤\n".
 							"此指令必須給出一個參數為搜尋的詞語");
@@ -255,27 +256,27 @@ foreach ($row as $data) {
 					}
 					break;
 
-				case '/help':
+				case 'help':
 					if (isset($cmd[2])) {
 						$msg = "參數過多\n".
 							"必須給出一個參數為指令的名稱";
 					} else if (isset($cmd[1])) {
 						switch ($cmd[1]) {
 							case 'start':
-								$msg = "/start 啟用訊息通知";
+								$msg = "start 啟用訊息通知";
 								break;
 							
 							case 'stop':
-								$msg = "/start 停用訊息通知";
+								$msg = "start 停用訊息通知";
 								break;
 							
 							case 'show':
-								$msg = "/show 顯示最後一封郵件內容\n".
-									 "/show [編號] 顯示指定編號郵件內容\n";
+								$msg = "show 顯示最後一封郵件內容\n".
+									 "show [編號] 顯示指定編號郵件內容\n";
 								break;
 							
 							case 'search':
-								$msg = "/search [文字] 搜尋郵件標題\n".
+								$msg = "search [文字] 搜尋郵件標題\n".
 									"此命令最多顯示".$C['SearchLimit']."筆結果\n".
 									"此命令支援正規表達式";
 								break;
@@ -285,7 +286,7 @@ foreach ($row as $data) {
 								break;
 							
 							case 'help':
-								$msg = "/help 顯示所有命令";
+								$msg = "help 顯示所有命令";
 								break;
 							
 							default:
@@ -294,13 +295,13 @@ foreach ($row as $data) {
 						}
 					} else {
 						$msg = "可用命令\n".
-						"/start 啟用訊息通知\n".
-						"/stop 停用訊息通知\n".
-						"/show 顯示郵件內容\n".
-						"/search 搜尋郵件標題\n".
+						"start 啟用訊息通知\n".
+						"stop 停用訊息通知\n".
+						"show 顯示郵件內容\n".
+						"search 搜尋郵件標題\n".
 						"yes\n".
-						"/help 顯示所有命令\n\n".
-						"/help [命令] 顯示命令的詳細用法";
+						"help 顯示所有命令\n\n".
+						"help [命令] 顯示命令的詳細用法";
 					}
 					SendMessage($tmid, $msg);
 					break;
@@ -324,8 +325,8 @@ foreach ($row as $data) {
 				default:
 					SendMessage($tmid, "無法辨識命令\n".
 						"本粉專由機器人自動運作\n".
-						"啟用訊息通知輸入 /start\n".
-						"顯示所有命令輸入 /help");
+						"啟用訊息通知輸入 start\n".
+						"顯示所有命令輸入 help");
 					break;
 			}
 		}

@@ -30,7 +30,7 @@ foreach ($row as $news) {
 		$msg = "#".$news["idx"]."\n".
 			$news["from"]."\n".
 			$news["subject"]."\n\n".
-			"向粉專傳送訊息 /show ".$news["idx"]." 查看郵件內容";
+			"向粉專傳送訊息 show ".$news["idx"]." 查看郵件內容";
 	}
 
 	if ($msg !== false) {

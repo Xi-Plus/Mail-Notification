@@ -11,6 +11,8 @@ $C['DBuser'] = 'user';
 $C['DBpass'] = 'pass';
 $C['DBTBprefix'] = 'tnfsh_notification_';
 
+$C['Pagename'] = "Kuas郵件公告";
+
 $C['UnreadLimit'] = 86400;
 $C['UnreadLimitText'] = "24小時";
 

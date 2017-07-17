@@ -30,7 +30,7 @@ foreach ($newss as $news) {
 	} else if (MailFilter($fromemail) == -1) {
 		$msg = false;
 	} else {
-		$msg = "#".$news["idx"]."\n".
+		$msg = $C['Pagename']." #".$news["idx"]."\n".
 			$news["from"]."\n".
 			$news["subject"];
 	}

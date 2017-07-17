@@ -27,6 +27,7 @@ foreach ($newss as $news) {
 	}
 	if ($fromemail === false || MailFilter($fromemail) == 0) {
 		$msg = "有一封來自 ".$news["from"]." 的郵件已被過濾器攔截，如果您認為這有誤，請回報";
+		AutoBlacklist($fromemail, $news["from"]);
 	} else if (MailFilter($fromemail) == -1) {
 		$msg = false;
 	} else {

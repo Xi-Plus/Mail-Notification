@@ -11,3 +11,10 @@ function MailFilter($mail) {
 	}
 	return 0;
 }
+function AutoBlacklist($mail, $comment) {
+	global $C, $G;
+	$sth = $G["db"]->prepare("INSERT INTO `{$C['DBTBprefix']}filter` (`no`, `regex`, `type`, `comment`) VALUES ('2', :regex, '-1', :comment)");
+	$sth->bindValue(":regex", "^".$mail."$");
+	$sth->bindValue(":comment", $comment);
+	$sth->execute();
+}
